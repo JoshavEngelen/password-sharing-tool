@@ -3,9 +3,20 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
+import { apiClient } from './apiClient'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [apiResult, setApiResult] = useState<string>('')
+
+  const handleRedisTest = async () => {
+    try {
+      const result = await apiClient.get<string>('/redis-test')
+      setApiResult(result)
+    } catch (error) {
+      setApiResult(error instanceof Error ? error.message : 'Unknown API error')
+    }
+  }
 
   return (
     <>
@@ -28,6 +39,10 @@ function App() {
         >
           Count is {count}
         </button>
+        <button type="button" className="counter" onClick={handleRedisTest}>
+          Test API
+        </button>
+        {apiResult && <p>API response: {apiResult}</p>}
       </section>
 
       <div className="ticks"></div>
