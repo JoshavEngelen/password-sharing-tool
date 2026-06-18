@@ -176,7 +176,7 @@ function App() {
 
     try {
       const { ciphertext, key } = await encryptSecret(secretInput)
-      const response = await apiClient.post<SecretCreateResponse>('/secrets', { ciphertext })
+      const response = await apiClient.post<SecretCreateResponse>('/api/secrets', { ciphertext })
       const token = extractTokenFromResponse(response)
 
       if (!token) {
