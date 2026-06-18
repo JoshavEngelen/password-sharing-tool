@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SecretController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
@@ -16,12 +17,8 @@ Route::prefix('api')->group(function () {
         return Cache::get('hello');
     });
 
-    Route::post('/secrets', function () {
-        return [];
-    });
-
-    Route::get('/secrets/{token}', function () {
-        return [];
-    });
+    Route::post('/secrets', [SecretController::class, 'store']);
+    Route::get('/secrets/{token}', [SecretController::class, 'show'])
+        ->whereAlphaNumeric('token');
 
 });
