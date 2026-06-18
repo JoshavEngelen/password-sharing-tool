@@ -9,13 +9,19 @@ use Illuminate\Support\Str;
 
 class SecretController extends Controller
 {
+    private const MIN_TTL_SECONDS = 60;
+
+    private const MAX_TTL_SECONDS = 21600;
+
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'ciphertext' => ['required', 'string', 'max:65535'],
+            'expires_in' => ['nullable', 'integer', 'between:60,21600'],
         ]);
 
-        $ttlSeconds = max((int) env('SECRET_TTL_SECONDS', 900), 60);
+        $defaultTtlSeconds = $this->normalizeTtl((int) env('SECRET_TTL_SECONDS', 900));
+        $ttlSeconds = (int) ($validated['expires_in'] ?? $defaultTtlSeconds);
         $token = $this->generateToken();
 
         Cache::put($this->cacheKey($token), $validated['ciphertext'], now()->addSeconds($ttlSeconds));
@@ -53,5 +59,10 @@ class SecretController extends Controller
     private function cacheKey(string $token): string
     {
         return sprintf('secret:%s', $token);
+    }
+
+    private function normalizeTtl(int $ttlSeconds): int
+    {
+        return min(max($ttlSeconds, self::MIN_TTL_SECONDS), self::MAX_TTL_SECONDS);
     }
 }

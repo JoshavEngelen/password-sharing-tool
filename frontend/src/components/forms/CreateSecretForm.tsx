@@ -3,10 +3,13 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Slider } from '@/components/ui/slider'
 
 interface CreateSecretFormProps {
   secretInput: string
   onSecretChange: (value: string) => void
+  ttlSeconds: number
+  onTtlChange: (value: number) => void
   createdUrl: string
   createError: string
   createBusy: boolean
@@ -19,6 +22,8 @@ interface CreateSecretFormProps {
 export function CreateSecretForm({
   secretInput,
   onSecretChange,
+  ttlSeconds,
+  onTtlChange,
   createdUrl,
   createError,
   createBusy,
@@ -27,6 +32,12 @@ export function CreateSecretForm({
   onCopyLink,
   onReset,
 }: CreateSecretFormProps) {
+  const formatTtl = (seconds: number): string => {
+    if (seconds < 60) return `${seconds}s`
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m`
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`
+    return `${Math.floor(seconds / 86400)}d`
+  }
   return (
     <>
       <div className="space-y-2">
@@ -43,6 +54,27 @@ export function CreateSecretForm({
         <p className="text-sm text-slate-400">
           De sleutel blijft in de browser en komt alleen in het URL-fragment terecht.
         </p>
+      </div>
+
+      <div className="space-y-3 rounded-xl border border-white/10 bg-slate-950/50 p-4">
+        <div className="flex items-center justify-between">
+          <label htmlFor="ttl-slider" className="text-sm font-medium text-slate-100">
+            Link verloopt na
+          </label>
+          <span className="rounded bg-sky-500/20 px-3 py-1 text-sm font-medium text-sky-300">
+            {formatTtl(ttlSeconds)}
+          </span>
+        </div>
+        <Slider
+          id="ttl-slider"
+          min={60}
+          max={21600}
+          step={60}
+          value={[ttlSeconds]}
+          onValueChange={(value) => onTtlChange(value[0])}
+          className="w-full"
+        />
+        <p className="text-xs text-slate-400">1 minuut - 6 uur</p>
       </div>
 
       <div className="grid gap-3 rounded-xl border border-white/10 bg-slate-950/50 p-4 sm:grid-cols-3">

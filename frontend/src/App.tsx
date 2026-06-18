@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ShieldAlert } from 'lucide-react'
-
 import { ApiError, apiClient } from './apiClient'
 import { encryptSecret, decryptSecret } from './crypto'
 import type { PageMode, SecretCreateResponse, SecretFetchResponse } from './types'
@@ -11,7 +9,6 @@ import {
   getSharedToken,
   buildShareUrl,
 } from './helpers'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Header } from './components/Header'
@@ -24,6 +21,7 @@ function App() {
   const initialToken = useMemo(() => getSharedToken(window.location.pathname), [])
   const [mode, setMode] = useState<PageMode>(initialToken ? 'open' : 'create')
   const [secretInput, setSecretInput] = useState('')
+  const [ttlSeconds, setTtlSeconds] = useState(900) // 15 minutes default
   const [createdUrl, setCreatedUrl] = useState('')
   const [createError, setCreateError] = useState('')
   const [createBusy, setCreateBusy] = useState(false)
@@ -62,7 +60,7 @@ function App() {
 
     try {
       const { ciphertext, key } = await encryptSecret(secretInput)
-      const response = await apiClient.post<SecretCreateResponse>('/api/secrets', { ciphertext })
+      const response = await apiClient.post<SecretCreateResponse>('/api/secrets', { ciphertext, expires_in: ttlSeconds })
       const token = extractTokenFromResponse(response)
 
       if (!token) {
@@ -123,6 +121,7 @@ function App() {
     window.history.pushState({}, '', '/')
     setMode('create')
     setSecretInput('')
+    setTtlSeconds(900)
     setCreatedUrl('')
     setCreateError('')
     setRevealedSecret('')
@@ -152,6 +151,8 @@ function App() {
                 <CreateSecretForm
                   secretInput={secretInput}
                   onSecretChange={setSecretInput}
+                  ttlSeconds={ttlSeconds}
+                  onTtlChange={setTtlSeconds}
                   createdUrl={createdUrl}
                   createError={createError}
                   createBusy={createBusy}
