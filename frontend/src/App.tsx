@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ApiError, apiClient } from './apiClient'
 import { encryptSecret, decryptSecret } from './crypto'
 import type { PageMode, SecretCreateResponse, SecretFetchResponse } from './types'
@@ -19,9 +19,11 @@ import { UserStories } from './components/UserStories'
 
 function App() {
   const initialToken = useMemo(() => getSharedToken(window.location.pathname), [])
+  const hasAutoOpenedRef = useRef(false)
   const [mode, setMode] = useState<PageMode>(initialToken ? 'open' : 'create')
   const [secretInput, setSecretInput] = useState('')
   const [ttlSeconds, setTtlSeconds] = useState(900) // 15 minutes default
+  const [maxUses, setMaxUses] = useState(1) // 1 use default
   const [createdUrl, setCreatedUrl] = useState('')
   const [createError, setCreateError] = useState('')
   const [createBusy, setCreateBusy] = useState(false)
@@ -41,10 +43,11 @@ function App() {
   }, [copied, createdUrl])
 
   useEffect(() => {
-    if (!initialToken) {
+    if (!initialToken || hasAutoOpenedRef.current) {
       return
     }
 
+    hasAutoOpenedRef.current = true
     void handleOpenSecret(initialToken)
   }, [initialToken])
 
@@ -60,7 +63,7 @@ function App() {
 
     try {
       const { ciphertext, key } = await encryptSecret(secretInput)
-      const response = await apiClient.post<SecretCreateResponse>('/api/secrets', { ciphertext, expires_in: ttlSeconds })
+      const response = await apiClient.post<SecretCreateResponse>('/api/secrets', { ciphertext, expires_in: ttlSeconds, max_uses: maxUses })
       const token = extractTokenFromResponse(response)
 
       if (!token) {
@@ -122,6 +125,7 @@ function App() {
     setMode('create')
     setSecretInput('')
     setTtlSeconds(900)
+    setMaxUses(1)
     setCreatedUrl('')
     setCreateError('')
     setRevealedSecret('')
@@ -153,6 +157,8 @@ function App() {
                   onSecretChange={setSecretInput}
                   ttlSeconds={ttlSeconds}
                   onTtlChange={setTtlSeconds}
+                  maxUses={maxUses}
+                  onMaxUsesChange={setMaxUses}
                   createdUrl={createdUrl}
                   createError={createError}
                   createBusy={createBusy}

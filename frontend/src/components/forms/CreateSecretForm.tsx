@@ -10,6 +10,8 @@ interface CreateSecretFormProps {
   onSecretChange: (value: string) => void
   ttlSeconds: number
   onTtlChange: (value: number) => void
+  maxUses: number
+  onMaxUsesChange: (value: number) => void
   createdUrl: string
   createError: string
   createBusy: boolean
@@ -24,6 +26,8 @@ export function CreateSecretForm({
   onSecretChange,
   ttlSeconds,
   onTtlChange,
+  maxUses,
+  onMaxUsesChange,
   createdUrl,
   createError,
   createBusy,
@@ -75,6 +79,27 @@ export function CreateSecretForm({
           className="w-full"
         />
         <p className="text-xs text-slate-400">1 minuut - 6 uur</p>
+      </div>
+
+      <div className="space-y-3 rounded-xl border border-white/10 bg-slate-950/50 p-4">
+        <div className="flex items-center justify-between">
+          <label htmlFor="max-uses" className="text-sm font-medium text-slate-100">
+            Aantal keer openbaar
+          </label>
+          <span className="rounded bg-sky-500/20 px-3 py-1 text-sm font-medium text-sky-300">
+            {maxUses}
+          </span>
+        </div>
+        <input
+          id="max-uses"
+          type="number"
+          min="1"
+          max="100"
+          value={maxUses}
+          onChange={(event) => onMaxUsesChange(Math.max(1, parseInt(event.target.value) || 1))}
+          className="w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+        />
+        <p className="text-xs text-slate-400">1 - 100 keer</p>
       </div>
 
       <div className="grid gap-3 rounded-xl border border-white/10 bg-slate-950/50 p-4 sm:grid-cols-3">

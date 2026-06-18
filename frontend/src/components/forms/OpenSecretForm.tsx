@@ -1,4 +1,4 @@
-import { Eye, KeyRound } from 'lucide-react'
+import { KeyRound } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -74,9 +74,9 @@ export function OpenSecretForm({
 
       {!revealedSecret && !fetchError && (
         <Alert className="border-white/10 bg-slate-950/50 text-slate-100">
-          <AlertTitle>Eenmalige toegang</AlertTitle>
+          <AlertTitle>Beperkte toegang</AlertTitle>
           <AlertDescription>
-            Story 3 verwacht dat de backend het geheim na deze leesactie verwijdert. Als de link daarna opnieuw geopend wordt, moet de API een niet-beschikbaar resultaat geven.
+            Het geheim blijft beschikbaar tot het ingestelde aantal weergaven is bereikt of de TTL verloopt.
           </AlertDescription>
         </Alert>
       )}
