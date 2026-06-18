@@ -15,7 +15,6 @@ import { Header } from './components/Header'
 import { CreateSecretForm } from './components/forms/CreateSecretForm'
 import { OpenSecretForm } from './components/forms/OpenSecretForm'
 import { ProcessSteps } from './components/ProcessSteps'
-import { UserStories } from './components/UserStories'
 
 function App() {
   const initialToken = useMemo(() => getSharedToken(window.location.pathname), [])
@@ -195,8 +194,6 @@ function App() {
         </section>
 
         <Separator className="bg-white/10" />
-
-        <UserStories />
       </div>
     </main>
   )
