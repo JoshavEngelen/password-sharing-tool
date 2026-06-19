@@ -18,10 +18,10 @@ This is a Single Page Application (SPA) for securely sharing sensitive informati
    ├─ Generate AES Key (encryption key)
    └─ Encrypt secret using AES Key
         │
-        ├─ Ciphertext → [Vile_Shadow SPA]
+        ├─ Ciphertext → [Vite Shadcn SPA]
         └─ AES Key → [URL Fragment #key]
 
-2. VILE_SHADOW SPA (Browser)
+2. VITE SHADCN SPA (Browser)
    ├─ Receive ciphertext
    ├─ Create metadata (timestamp, recipient info)
    └─ Send to Laravel API
