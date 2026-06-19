@@ -1,6 +1,6 @@
 # Password Sharing Tool - Frontend
 
-React + TypeScript + Vite SPA for securely sharing encrypted secrets.
+Vite Shadcn React + TypeScript SPA for securely sharing encrypted secrets.
 
 See [main README](../README.md) for architecture, security details, and full setup instructions.
 
